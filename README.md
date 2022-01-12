@@ -238,7 +238,7 @@ public class UserController {
 }
 
 ```
-In the above code the class is annotated with @RestController telling Spring that the data returned by each method will be written straight into the response  body instead of rendering a template.
+In the above code the class is annotated with @RestController telling Spring that the data returned by each method will be written straight into the ressponse  body instead of rendering a template.
 The UserRepository is injected by constructor into the controller. The @Autowired enable automatic dependency injection.
 
 The @PostMapping , @GetMapping, @PutMapping and @DeleteMapping corresponds to the POST, GET, UPDATE and DELETE actions. 
@@ -623,7 +623,7 @@ The --watch tag will tell the webpack to constantly watch for changes in our cod
 
 ### 3f. Final Setup Step 
 Remember when we create our UserController it had a @RestController annotation to serve the rest methods in that class.
-If can still recall we said the @RestController tells Spring that the data returned by each method will be written straight into the response  body instead of rendering a template.
+If can still recall we said the @RestController tells Spring that the data returned by each method will be written straight into the ressponse  body instead of rendering a template.
 Now we need an endpoint that will render a template. S
 So lets create a separate class in our controllers called WebMainController which will render the index page of our react App.js main component.
 

@@ -1,5 +1,6 @@
-import React, {Component, useRef, useState} from 'react';
+import React, {Component} from 'react';
 import {Button, Form, FormLabel, FormControl, FormGroup} from "react-bootstrap";
+import axios from "axios";
 
 class RegisterUser extends Component {
     constructor(props) {
@@ -27,9 +28,13 @@ class RegisterUser extends Component {
         e.preventDefault();
         //Copying state object to newUser
         let newUser = this.state;
-        this.props.addUser(newUser);
+        this.addUser(newUser);
         //Resetting the fields
         e.target.reset();
+    }
+
+    addUser = (newUser) => {
+        axios.post('/user/save', newUser);
     }
 
     render() {
