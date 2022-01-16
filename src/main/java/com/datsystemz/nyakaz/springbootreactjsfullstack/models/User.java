@@ -1,11 +1,11 @@
 package com.datsystemz.nyakaz.springbootreactjsfullstack.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-@Entity
+import javax.persistence.*;
+import java.util.Set;
+
+@Entity()
 public class User {
 
     @Id
@@ -14,16 +14,20 @@ public class User {
     private String email;
     private String username;
     private String password;
+    @OneToMany()
+    @JsonManagedReference
+    private Set<Plant> plants;
 
-    protected User(){}
+    protected User() {
+    }
 
-    public User(String email, String username, String password){
+    public User(String email, String username, String password) {
         this.email = email;
         this.username = username;
         this.password = password;
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
@@ -53,5 +57,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Plant> getPlants() {
+        return plants;
+    }
+
+    public void setPlants(Set<Plant> plants) {
+        this.plants = plants;
     }
 }

@@ -45,7 +45,7 @@ class RegisterUser extends Component {
                     <FormControl name="email" placeholder="Enter email" onChange={this.onChange}/>
                 </FormGroup>
 
-                <FormGroup className="mb-3" controlId="formBasicEmail">
+                <FormGroup className="mb-3" controlId="floatingInputCustom">
                     <FormLabel> Name </FormLabel>
                     <FormControl name="username" placeholder="Enter name" onChange={this.onChange}/>
                 </FormGroup>

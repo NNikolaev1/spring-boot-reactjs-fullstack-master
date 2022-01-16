@@ -10,13 +10,14 @@ import {Link} from "react-router-dom";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import '../css/styles.css';
 import UserPage from "../../../frontend/src/components/users/UserPage";
-import UserInfo from "../../../frontend/src/components/user-info/UserInfo";
+import Plants from "../../../frontend/src/components/plants/Plants";
 
 export class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
             users: [],
+            plants: [],
             filteredData: []
         }
     }
@@ -55,6 +56,7 @@ export class App extends Component {
 
                             <Link to="/" className='text-link'>Home</Link>
                             <Link to="/registerUser" className='text-link'>Register User </Link>
+                            <Link to="/createPlant" className='text-link'>Create Plant </Link>
 
                             <Link to="/searchUsers" className='text-link'>Search Users </Link>
 
@@ -70,8 +72,9 @@ export class App extends Component {
                         </Container>
                     </Navbar>
                     <Switch>
-                        <Route exact path="/" component={RegisterUser}/>
+                        {/*<Route exact path="/" component={RegisterUser}/>*/}
                         <Route path="/registerUser" component={RegisterUser}/>
+                        <Route path="/createPlant" component={Plants}/>
                         <Route path="/searchUsers" component={() => <SearchUsers removeUser={this.removeUser}/>}/>
                         <Route exact path="/userPage/:id" component={(props) => <UserPage {...props} />} />
                         <Route path="/allUsers" component={() => <Users removeUser={this.removeUser}/>}/>
