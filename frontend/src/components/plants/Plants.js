@@ -3,6 +3,7 @@ import {Button, Form, FormLabel, FormControl, FormGroup, Table} from "react-boot
 import axios from "axios";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from "@material-ui/icons/Delete";
+import ScanPlant from "./ScanPlant";
 
 class Plants extends Component {
     constructor(props) {
@@ -85,6 +86,7 @@ class Plants extends Component {
                     ))}
                     </tbody>
                 </Table>
+                <ScanPlant/>
             </Form>
 
         )

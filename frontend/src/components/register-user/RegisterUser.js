@@ -10,11 +10,6 @@ class RegisterUser extends Component {
             username: '',
             password: ''
         }
-
-        //If you dont use arrow function you will have to manually bind like this
-        //If you dont bind you wont be able to access items in the state of this component because it wont be recognised in lifecycle
-        //this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
     }
 
     onChange = (e) => {
@@ -26,10 +21,8 @@ class RegisterUser extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-        //Copying state object to newUser
         let newUser = this.state;
         this.addUser(newUser);
-        //Resetting the fields
         e.target.reset();
     }
 

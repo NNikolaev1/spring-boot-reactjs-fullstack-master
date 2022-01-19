@@ -10,6 +10,8 @@ import {
     Row,
     Table
 } from "react-bootstrap";
+import QRCodeGeneration from "../plants/QRCodeGeneration";
+import ScanPlant from "../plants/ScanPlant";
 
 //TODO create UserService https://www.youtube.com/watch?v=5RA5NpxbioI
 class UserPage extends Component {
@@ -19,6 +21,8 @@ class UserPage extends Component {
             user: [],
             unAssignedPlants: [],
             userPlants: [],
+            scanQRCode: '',
+            scannedPlantId: ''
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -53,7 +57,6 @@ class UserPage extends Component {
         });
         this.state.userPlants.find(item => item.id === id).quantity += addedValue;
 
-        this.setState({userPlants: this.state.userPlants});
         axios.put(`/plant/${plantFound[0].id}`, plantFound[0])
             .then(() => this.setState({userPlants: this.state.userPlants}));
 
@@ -63,6 +66,27 @@ class UserPage extends Component {
         //         })
         //     );
         // }
+    }
+
+    handleScan = id => {
+        if (id) {
+            axios.get(`/plant/${id}`)
+                .then(response => {
+                    const ids = this.state.userPlants.id;
+                    if (!this.state.userPlants.includes(response.data)) {
+                        axios.put(`/user/${this.props.match.params.id}`, response.data)
+                            .then(() => this.setState({
+                                unAssignedPlants: this.state.unAssignedPlants.filter(el => el.id.toString() !== id),
+                                userPlants: [...this.state.user.plants, response.data]
+                            }));
+                    }
+                });
+        }
+    }
+
+    startCamera() {
+        const scanQR = this.state.scanQRCode;
+        this.setState({scanQRCode: !scanQR});
     }
 
     render() {
@@ -127,7 +151,9 @@ class UserPage extends Component {
                                     <th>#</th>
                                     <th>Plant Name</th>
                                     <th>Plant location</th>
-                                    <th>Number of plants</th>
+                                    <th>QR code</th>
+                                    <th>Plants quantity</th>
+                                    <th>Update quantity</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -139,6 +165,9 @@ class UserPage extends Component {
                                         </td>
                                         <td>
                                             {plant.location}
+                                        </td>
+                                        <td>
+                                            <QRCodeGeneration id={plant.id}/>
                                         </td>
                                         <td>
                                             {plant.quantity}
@@ -161,6 +190,10 @@ class UserPage extends Component {
                                 )}
                                 </tbody>
                             </Table>
+                            <Button variant="primary" onClick={() => this.startCamera()}>
+                                Scan QR Code
+                            </Button>
+                            {this.state.scanQRCode && <ScanPlant handleScan={this.handleScan}/>}
                         </Col>
                     </Row>
                 </Row>
