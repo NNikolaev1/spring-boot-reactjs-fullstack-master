@@ -15,7 +15,7 @@ public class User {
     private String username;
     private String password;
     @OneToMany()
-    @JsonManagedReference
+    @JsonManagedReference(value="userReference")
     private Set<Plant> plants;
 
     protected User() {
@@ -65,5 +65,10 @@ public class User {
 
     public void setPlants(Set<Plant> plants) {
         this.plants = plants;
+    }
+
+    public void removePlant(Plant plant) {
+        plants.remove(plant);
+//        plant.setLocation(this);
     }
 }

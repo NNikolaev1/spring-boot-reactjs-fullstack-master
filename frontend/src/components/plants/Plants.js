@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Form, FormLabel, FormControl, FormGroup, Table} from "react-bootstrap";
+import {Button, Form, FormLabel, FormControl, FormGroup, Table, FormSelect} from "react-bootstrap";
 import axios from "axios";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -9,9 +9,12 @@ class Plants extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            plants: []
+            plants: [],
+            locations: [],
+            location: '',
         }
         this.onSubmit = this.onSubmit.bind(this);
+        this.selectLocation = this.selectLocation.bind(this);
     }
 
     onChange = (e) => {
@@ -20,16 +23,29 @@ class Plants extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-        //Copying state object to newPlant
         let newPlant = this.state;
+        newPlant.location = this.state.location[0];
         this.addPlant(newPlant);
-        //Resetting the fields
         e.target.reset();
+    }
+
+    selectLocation(e) {
+        this.setState({
+            location: this.state.locations.filter(location => {
+                return location.id.toString() === e.target.value
+            })
+        });
     }
 
     componentDidMount() {
         axios.get('/plant/all')
-            .then(response => this.setState({plants: response.data}))
+            .then(response => {
+                // axios.get(`/location/${response.data.locationId}`)
+                //     .then(response => this.setState({plants: response.data}))
+                this.setState({plants: response.data})
+            })
+        axios.get('/location/all')
+            .then(response => this.setState({locations: response.data}))
     }
 
     addPlant = (newPlant) => {
@@ -50,14 +66,20 @@ class Plants extends Component {
     render() {
         return (
             <Form onSubmit={this.onSubmit}>
-                <FormGroup className="mb-3" controlId="formBasicEmail">
+                <FormGroup className="mb-3" >
                     <FormLabel> Name </FormLabel>
                     <FormControl name="name" placeholder="Enter name" onChange={this.onChange}/>
                 </FormGroup>
-                <FormGroup className="mb-3" controlId="formBasicEmail">
-                    <FormLabel>Location</FormLabel>
-                    <FormControl name="location" placeholder="Enter location" onChange={this.onChange}/>
-                </FormGroup>
+                <FormLabel> Location </FormLabel>
+                <FormSelect onChange={this.selectLocation}>
+                    <option>Select from the unassigned locations</option>
+                    {this.state.locations.map((location) =>
+                        <option key={location.id} value={location.id}>
+                            {location.name}
+                        </option>
+                    )}
+                </FormSelect>
+                <br/>
                 <Button variant="primary" type="submit" onChange={this.onChange}>
                     Submit
                 </Button>
@@ -65,30 +87,35 @@ class Plants extends Component {
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>First Name</th>
+                        <th>Plant name</th>
                         <th>Location</th>
-                        <th/>
+                        <th>Quantity</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    {this.state.plants.map((plant) => (
-                        <tr>
-                            <td>
-                            </td>
-                            <td>{plant.name}</td>
-                            <td>{plant.location}</td>
-                            <td>{plant.quantity}</td>
-                            <td><IconButton color="secondary" onClick={(e) => this.removePlant(plant.id, e)}>
-                                <DeleteIcon/>
-                            </IconButton></td>
-                        </tr>
-                    ))}
+                    {this.state.plants.map((plant) => {
+                        const location = this.state.locations.filter(loc => {
+                            return loc.id === plant.locationId
+                        });
+                        return (
+                            <tr>
+                                <td>
+                                </td>
+                                <td>{plant.name}</td>
+                                <td>  {location.length > 0 && location[0].name}
+                                </td>
+                                <td>{plant.quantity}</td>
+                                <td><IconButton color="secondary" onClick={(e) => this.removePlant(plant.id, e)}>
+                                    <DeleteIcon/>
+                                </IconButton></td>
+                            </tr>
+                        )
+                    })}
                     </tbody>
                 </Table>
                 <ScanPlant/>
             </Form>
-
         )
     }
 }

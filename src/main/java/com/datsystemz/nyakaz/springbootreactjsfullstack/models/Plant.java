@@ -11,10 +11,13 @@ public class Plant {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String location;
-    private int quantity;
     @ManyToOne()
-    @JsonBackReference
+    @JsonBackReference(value = "locationReference")
+    private Location location;
+
+    private int quantity;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference(value = "userReference")
     private User user;
 
     public Long getId() {
@@ -33,11 +36,11 @@ public class Plant {
         this.name = name;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
@@ -55,5 +58,24 @@ public class Plant {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getLocationId() {
+        return location != null ? location.getId() : null;
+    }
+
+//    public void addLocation(Plant plant) {
+//        location.add(plant);
+//        plant.setLocation(this);
+//    }
+
+    public void removeLocation(Plant plant) {
+        plant.getLocation().removePlant(plant);
+        plant.setLocation(null);
+    }
+
+    public void removeUser(Plant plant) {
+        plant.getUser().removePlant(plant);
+        plant.setUser(null);
     }
 }

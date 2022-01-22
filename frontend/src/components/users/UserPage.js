@@ -22,12 +22,15 @@ class UserPage extends Component {
             unAssignedPlants: [],
             userPlants: [],
             scanQRCode: '',
-            scannedPlantId: ''
+            scannedPlantId: '',
+            locations: []
         }
         this.handleChange = this.handleChange.bind(this)
     }
 
     componentDidMount() {
+        axios.get('/location/all')
+            .then(response => this.setState({locations: response.data}))
         //maybe show the props here and what it has
         axios.get(`/user/${this.props.match.params.id}`)
             .then(response => this.setState({
@@ -72,6 +75,7 @@ class UserPage extends Component {
         if (id) {
             axios.get(`/plant/${id}`)
                 .then(response => {
+                    //TODO fix this probably it doesnt work in all cases
                     const ids = this.state.userPlants.id;
                     if (!this.state.userPlants.includes(response.data)) {
                         axios.put(`/user/${this.props.match.params.id}`, response.data)
@@ -157,37 +161,42 @@ class UserPage extends Component {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {this.state.userPlants.map((plant) =>
-                                    <tr>
-                                        <td/>
-                                        <td>
-                                            {plant.name}
-                                        </td>
-                                        <td>
-                                            {plant.location}
-                                        </td>
-                                        <td>
-                                            <QRCodeGeneration id={plant.id}/>
-                                        </td>
-                                        <td>
-                                            {plant.quantity}
-                                        </td>
-                                        <td>
-                                            <Button variant="primary" type="submit" onClick={() =>
-                                                this.updatePlantQuantity(plant.id, 1)}>
-                                                Increase quantity
-                                            </Button>
-                                        </td>
-                                        {plant.quantity > 1 &&
-                                        <td>
-                                            <Button variant="primary" type="submit" onClick={() =>
-                                                this.updatePlantQuantity(plant.id, -1)}>
-                                                Decrease quantity
-                                            </Button>
-                                        </td>
-                                        }
-                                    </tr>
-                                )}
+                                {this.state.userPlants.map((plant) => {
+                                    const location = this.state.locations.filter(loc => {
+                                        return loc.id === plant.locationId
+                                    });
+                                    return (
+                                        <tr>
+                                            <td/>
+                                            <td>
+                                                {plant.name}
+                                            </td>
+                                            <td>
+                                               {location.length > 0 && location[0].name}
+                                            </td>
+                                            <td>
+                                                <QRCodeGeneration id={plant.id}/>
+                                            </td>
+                                            <td>
+                                                {plant.quantity}
+                                            </td>
+                                            <td>
+                                                <Button variant="primary" type="submit" onClick={() =>
+                                                    this.updatePlantQuantity(plant.id, 1)}>
+                                                    Increase quantity
+                                                </Button>
+                                            </td>
+                                            {plant.quantity > 1 &&
+                                            <td>
+                                                <Button variant="primary" type="submit" onClick={() =>
+                                                    this.updatePlantQuantity(plant.id, -1)}>
+                                                    Decrease quantity
+                                                </Button>
+                                            </td>
+                                            }
+                                        </tr>
+                                    )
+                                })}
                                 </tbody>
                             </Table>
                             <Button variant="primary" onClick={() => this.startCamera()}>
