@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {Button, Form, FormLabel, FormControl, FormGroup, Table, FormSelect} from "react-bootstrap";
+import {Button, Form, FormLabel, FormControl, FormGroup, Table, FormSelect, Alert} from "react-bootstrap";
 import axios from "axios";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from "@material-ui/icons/Delete";
 import ScanPlant from "./ScanPlant";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import {Link} from "react-router-dom";
 
 class Plants extends Component {
     constructor(props) {
@@ -12,6 +14,7 @@ class Plants extends Component {
             plants: [],
             locations: [],
             location: '',
+            showErrorMessage: ''
         }
         this.onSubmit = this.onSubmit.bind(this);
         this.selectLocation = this.selectLocation.bind(this);
@@ -40,8 +43,6 @@ class Plants extends Component {
     componentDidMount() {
         axios.get('/plant/all')
             .then(response => {
-                // axios.get(`/location/${response.data.locationId}`)
-                //     .then(response => this.setState({plants: response.data}))
                 this.setState({plants: response.data})
             })
         axios.get('/location/all')
@@ -51,6 +52,7 @@ class Plants extends Component {
     addPlant = (newPlant) => {
         axios.post('/plant/save', newPlant)
             .then(response => this.setState({plants: [...this.state.plants, response.data]}))
+            .catch(err => this.setState({showErrorMessage: true}));
     }
 
     removePlant = (id) => {
@@ -66,7 +68,7 @@ class Plants extends Component {
     render() {
         return (
             <Form onSubmit={this.onSubmit}>
-                <FormGroup className="mb-3" >
+                <FormGroup className="mb-3">
                     <FormLabel> Name </FormLabel>
                     <FormControl name="name" placeholder="Enter name" onChange={this.onChange}/>
                 </FormGroup>
@@ -80,6 +82,14 @@ class Plants extends Component {
                     )}
                 </FormSelect>
                 <br/>
+
+                {this.state.showErrorMessage &&
+                <Alert key="danger" variant="danger" onClose={() => this.setState({showErrorMessage: false})}
+                       dismissible>
+                    There was a problem creating the plant please enter correctly all the required data!
+                </Alert>
+                }
+
                 <Button variant="primary" type="submit" onChange={this.onChange}>
                     Submit
                 </Button>
@@ -101,6 +111,8 @@ class Plants extends Component {
                         return (
                             <tr>
                                 <td>
+                                    <Link to={`plantPage/${plant.id}`} className='text-link'><AccountCircleIcon
+                                        style={{color: "#138a04"}}/></Link>
                                 </td>
                                 <td>{plant.name}</td>
                                 <td>  {location.length > 0 && location[0].name}

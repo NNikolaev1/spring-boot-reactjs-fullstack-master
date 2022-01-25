@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
-import {Button, Form, FormLabel, FormControl, FormGroup, Table, FloatingLabel, FormSelect} from "react-bootstrap";
+import {Button, Form, FormLabel, FormControl, FormGroup, Table} from "react-bootstrap";
 import axios from "axios";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from "@material-ui/icons/Delete";
+import QRCodeGeneration from "../plants/QRCodeGeneration";
 
 class Locations extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            newLocation: '',
             locations: [],
-            unAssignedPlants: []
         }
         this.onSubmit = this.onSubmit.bind(this);
-        this.handleChange = this.handleChange.bind(this);
     }
 
     onChange = (e) => {
@@ -30,26 +28,12 @@ class Locations extends Component {
     componentDidMount() {
         axios.get('/location/all')
             .then(response => this.setState({locations: response.data}))
-        axios.get('/plant/unassigned')
-            .then(response => this.setState({unAssignedPlants: response.data}))
-    }
-
-    handleChange(e) {
-        const plantFound = this.state.unAssignedPlants.filter(plant => {
-            return plant.id.toString() === e.target.value
-        });
-        axios.put(`/location/${1}`, plantFound[0])
-            .then(response => this.setState({
-                // user: response.data,
-                unAssignedPlants: this.state.unAssignedPlants.filter(el => el.id !== plantFound[0].id)
-            }));
     }
 
     addLocation = (newLocation) => {
         axios.post('/location/save', newLocation)
             .then(response => this.setState({
                 locations: [...this.state.locations, response.data],
-                newLocation: response.data
             }))
     }
 
@@ -78,7 +62,7 @@ class Locations extends Component {
                     <tr>
                         <th>#</th>
                         <th>Location name</th>
-                        <th>Plants</th>
+                        <th>Plants assigned to this location</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -88,17 +72,22 @@ class Locations extends Component {
                             <td>
                             </td>
                             <td>{location.name}</td>
-                            {/*<td>{location.plants}</td>*/}
+
+                            <td>
+                                <QRCodeGeneration id={location.id}/>
+                            </td>
+
+                            {location.plants && location.plants.map((plant) => (
+                                <div>{plant.name} </div>
+                            ))}
                             <td><IconButton color="secondary" onClick={(e) => this.removeLocation(location.id, e)}>
                                 <DeleteIcon/>
                             </IconButton></td>
                         </tr>
                     ))}
-
                     </tbody>
                 </Table>
             </Form>
-
         )
     }
 }

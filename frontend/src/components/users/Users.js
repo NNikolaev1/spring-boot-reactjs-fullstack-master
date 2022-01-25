@@ -12,8 +12,12 @@ class Users extends Component {
     }
 
     componentDidMount() {
-        axios.get('/user/all')
-            .then(response => this.setState({users: response.data}))
+        axios.get('/user/all').then(response => this.setState({users: response.data}))
+    }
+
+    removeUser = (id) => {
+        axios.delete(`/user/${id}`)
+            .then(() => this.setState({users: [...this.state.users.filter(user => user.id !== id)]}));
     }
 
     render() {
@@ -30,7 +34,7 @@ class Users extends Component {
                 <tbody>
 
                 {this.state.users.map((user) => (
-                    <UserInfo user={user} key={user.id} removeUser={this.props.removeUser}/>
+                    <UserInfo user={user} key={user.id} removeUser={this.removeUser}/>
                 ))}
                 </tbody>
             </Table>

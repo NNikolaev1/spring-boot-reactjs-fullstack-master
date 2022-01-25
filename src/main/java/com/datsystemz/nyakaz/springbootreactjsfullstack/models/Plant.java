@@ -64,18 +64,17 @@ public class Plant {
         return location != null ? location.getId() : null;
     }
 
-//    public void addLocation(Plant plant) {
-//        location.add(plant);
-//        plant.setLocation(this);
-//    }
-
-    public void removeLocation(Plant plant) {
-        plant.getLocation().removePlant(plant);
-        plant.setLocation(null);
+    public void updateLocation() {
+        location.addPlant(this);
     }
 
-    public void removeUser(Plant plant) {
-        plant.getUser().removePlant(plant);
-        plant.setUser(null);
+    public void removeLocation() {
+        this.getLocation().removePlant(this);
+        this.setLocation(null);
+    }
+
+    public void removeUser() {
+        this.getUser().removePlant(this);
+        this.setUser(null);
     }
 }

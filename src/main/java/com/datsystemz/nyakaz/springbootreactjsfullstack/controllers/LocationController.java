@@ -3,15 +3,12 @@ package com.datsystemz.nyakaz.springbootreactjsfullstack.controllers;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.exceptions.ResourceNotFoundException;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.models.Location;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.models.Plant;
-import com.datsystemz.nyakaz.springbootreactjsfullstack.models.User;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/location")
@@ -36,13 +33,6 @@ public class LocationController {
         );
     }
 
-//    @GetMapping("/unassigned")
-//    public ResponseEntity<List<Location>> getUnassignedLocations() {
-//        return ResponseEntity.ok(
-//                this.locationRepository.findAllByUserIsNull()
-//        );
-//    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Location> getLocation(@PathVariable(value = "id") Long id) {
         Location location = this.locationRepository.findById(id).orElseThrow(
@@ -59,7 +49,6 @@ public class LocationController {
         location.addPlant(plant);
 
         this.locationRepository.save(location);
-//        this.plantRepository.save(plant);
         return location;
     }
 
@@ -69,8 +58,7 @@ public class LocationController {
                 () -> new ResourceNotFoundException("Location not found" + id)
         );
 
-        location.getPlants().forEach(plant -> plant.setLocation(null));
-
+        location.getPlants().forEach(Plant::removeLocation);
         this.locationRepository.delete(location);
         return ResponseEntity.ok().build();
     }

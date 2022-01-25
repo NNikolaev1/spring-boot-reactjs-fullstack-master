@@ -18,6 +18,11 @@ class SearchUsers extends Component {
             .then(response => this.setState({users: response.data}))
     }
 
+    removeUser = (id) => {
+        axios.delete(`/user/${id}`)
+            .then(() => this.setState({filteredData: [...this.state.filteredData.filter(user => user.id !== id)]}));
+    }
+
     handleInputChange = event => {
         const query = event.target.value;
         if (query.length > 0) {
@@ -55,7 +60,7 @@ class SearchUsers extends Component {
                     <tbody>
 
                     {this.state.filteredData.map((user) => (
-                        <UserInfo user={user} key={user.id} removeUser={this.props.removeUser}/>
+                        <UserInfo user={user} key={user.id} removeUser={this.removeUser}/>
                     ))}
                     </tbody>
                 </Table>

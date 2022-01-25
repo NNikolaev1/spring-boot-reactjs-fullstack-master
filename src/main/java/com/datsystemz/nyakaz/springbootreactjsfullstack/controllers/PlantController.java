@@ -2,6 +2,7 @@ package com.datsystemz.nyakaz.springbootreactjsfullstack.controllers;
 
 
 import com.datsystemz.nyakaz.springbootreactjsfullstack.exceptions.ResourceNotFoundException;
+import com.datsystemz.nyakaz.springbootreactjsfullstack.models.Location;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.models.Plant;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.repositories.LocationRepository;
 import com.datsystemz.nyakaz.springbootreactjsfullstack.repositories.PlantRepository;
@@ -26,7 +27,7 @@ public class PlantController {
         this.plantRepository = plantRepository;
     }
 
-    @PostMapping(path="/save")
+    @PostMapping(path = "/save")
     @ResponseBody
     public Plant savePlant(@RequestBody Plant plant) {
         plant.getLocation().getPlants().add(plant);
@@ -58,18 +59,13 @@ public class PlantController {
     }
 
     @PutMapping("/{id}")
-    public Plant updatePlant(@RequestBody Plant newPlant, @PathVariable(value = "id") Long id) {
+    public Plant updatePlantLocation(@RequestBody Location newLocation, @PathVariable(value = "id") Long id) {
         return this.plantRepository.findById(id)
                 .map(plant -> {
-                    plant.setName(newPlant.getName());
-//                    plant.setLocation(newPlant.getLocation());
-                    plant.setQuantity(newPlant.getQuantity());
+                    plant.setLocation(newLocation);
                     return this.plantRepository.save(plant);
                 })
-                .orElseGet(() -> {
-                    newPlant.setId(id);
-                    return this.plantRepository.save(newPlant);
-                });
+                .orElse(null);
     }
 
     @DeleteMapping("/{id}")
@@ -79,11 +75,11 @@ public class PlantController {
         );
 
         if (Objects.nonNull(plant.getUser())) {
-            plant.removeUser(plant);
+            plant.removeUser();
         }
 
         if (Objects.nonNull(plant.getLocation())) {
-            plant.removeLocation(plant);
+            plant.removeLocation();
         }
 
         this.plantRepository.delete(plant);

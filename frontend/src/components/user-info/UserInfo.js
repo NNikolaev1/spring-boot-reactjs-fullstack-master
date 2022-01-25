@@ -8,27 +8,21 @@ import {Link} from "react-router-dom";
 class UserInfo extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            path: [],
-        }
     }
 
     render() {
-        //Destructuring instead of using this.props.user.<variable> you can now use name | surname
         const {id} = this.props.user;
         return (
             <tr>
                 <td>
                     <Link to={`userPage/${id}`} className='text-link'><AccountCircleIcon
-                    style={{color: "#138a04"}}/></Link>
+                        style={{color: "#138a04"}}/></Link>
                 </td>
                 <td>{this.props.user.username}</td>
                 <td>{this.props.user.email}</td>
-                {/*<td>{this.props.user.plants}</td>*/}
                 <td><IconButton color="secondary" onClick={(e) => this.props.removeUser(id, e)}>
                     <DeleteIcon/>
                 </IconButton></td>
-                {/*<Route exact path="/allUsers/userPage" component={() => <UserPage user={this.props.user}/>}/>*/}
             </tr>
         );
     }
